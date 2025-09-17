@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,         // اول نقش‌ها
             SuperAdminSeeder::class,   // سپس ادمین
             WriterUserSeeder::class,   // و در نهایت نویسنده
+            SectionSeeder::class, // <-- این خط را اضافه کن
         ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\AuthService;
 use App\Traits\ApiResponse;
@@ -45,7 +46,7 @@ class AuthController extends Controller
         $user->assignRole($data['role']);
 
         return $this->successResponse(
-            ['user' => $user],
+            ['user' => new UserResource($user)], // <-- استفاده از UserResource
             'کاربر جدید با موفقیت ایجاد شد.',
             Response::HTTP_CREATED
         );
@@ -59,8 +60,11 @@ class AuthController extends Controller
         try {
             $result = $this->authService->login($request->validated());
 
-            return $this->successResponse($result, 'ورود با موفقیت انجام شد.');
-
+            // ... (در متد login)
+            return $this->successResponse([
+                'access_token' => $result['access_token'],
+                'user' => new UserResource($result['user']), // <-- استفاده از UserResource
+            ], 'ورود موفقیت امیز بود.');
         } catch (AuthenticationException $e) {
 
             return $this->errorResponse($e->getMessage(), Response::HTTP_UNAUTHORIZED);
