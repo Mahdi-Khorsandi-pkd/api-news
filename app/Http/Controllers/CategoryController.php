@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\CategoryService;
 use App\Traits\ApiResponse;
@@ -29,29 +30,33 @@ class CategoryController extends Controller
     public function index(): JsonResponse
     {
         $categories = $this->categoryService->getAllCategories();
-        return $this->successResponse($categories, 'Categories fetched successfully.');
+        // برای لیست‌ها از متد collection استفاده می‌کنیم
+        return $this->successResponse(CategoryResource::collection($categories), 'دسته بندی با موفقیت دریافت شد .');
     }
 
     public function store(StoreCategoryRequest $request): JsonResponse
     {
         $category = $this->categoryService->createCategory($request->validated());
-        return $this->successResponse($category, 'Category created successfully.', Response::HTTP_CREATED);
+        return $this->successResponse(new CategoryResource($category), 'دسته بندی با موفقیت ساخته شد.', Response::HTTP_CREATED);
     }
 
     public function show(Category $category): JsonResponse
     {
-        return $this->successResponse($category);
+        // لود کردن روابط برای نمایش در ریسورس
+        $category->load(['parent', 'children']);
+        return $this->successResponse(new CategoryResource($category));
     }
 
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
         $this->categoryService->updateCategory($category, $request->validated());
-        return $this->successResponse($category, 'Category updated successfully.');
+        return $this->successResponse(new CategoryResource($category), 'دسته بندی با موفقیت ویرایش شد.');
     }
+
 
     public function destroy(Category $category): JsonResponse
     {
         $this->categoryService->deleteCategory($category);
-        return $this->successResponse(null, 'Category deleted successfully.');
+        return $this->successResponse(null, 'دسته بندی با موفقیت حذف شد.');
     }
 }
