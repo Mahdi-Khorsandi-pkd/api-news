@@ -20,9 +20,11 @@ class SectionController extends Controller
     {
         $this->sectionService = $sectionService;
 
-        $this->authorizeResource(Section::class, 'section');
+        // به جز متدهای index و show، بقیه را محافظت کن
+        $this->authorizeResource(Section::class, 'section', [
+            'except' => ['index'],
+        ]);
     }
-
     public function index(): JsonResponse
     {
         // $this->authorize('viewAny', Section::class); // authorizeResource این کار را انجام می‌دهد

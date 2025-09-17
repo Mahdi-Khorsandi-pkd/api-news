@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
+Route::get('/sections', [SectionController::class, 'index']);
 
 
 // ### مسیرهای محافظت شده (نیاز به لاگین) ###
@@ -34,7 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
 
         // Sections  <-- مسیرهای جدید اینجا اضافه شدند
-        Route::get('/sections', [SectionController::class, 'index']);
         Route::get('/sections/{section}', [SectionController::class, 'show']);
         Route::post('/sections/{section}/sync-categories', [SectionController::class, 'syncCategories']);
     });
