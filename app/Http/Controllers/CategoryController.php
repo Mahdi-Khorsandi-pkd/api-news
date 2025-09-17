@@ -3,47 +3,57 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * نمایش لیست دسته‌بندی‌ها
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        // استفاده از paginate برای مدیریت بهتر داده‌های زیاد
+        $categories = Category::latest()->paginate(15);
+        return response()->json($categories);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * ذخیره یک دسته‌بندی جدید
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request): JsonResponse
     {
-        //
+        $category = Category::create($request->validated());
+        return response()->json($category, Response::HTTP_CREATED);
     }
 
     /**
-     * Display the specified resource.
+     * نمایش یک دسته‌بندی خاص
      */
-    public function show(Category $category)
+    public function show(Category $category): JsonResponse
     {
-        //
+        // با استفاده از Route Model Binding، لاراول خودش دسته بندی رو پیدا می‌کنه
+        return response()->json($category);
     }
 
     /**
-     * Update the specified resource in storage.
+     * ویرایش یک دسته‌بندی
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
-        //
+        $category->update($request->validated());
+        return response()->json($category);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * حذف یک دسته‌بندی
      */
-    public function destroy(Category $category)
+    public function destroy(Category $category): Response
     {
-        //
+        $category->delete();
+        // کد 204 یعنی عملیات موفق بود و هیچ محتوایی برای بازگشت وجود ندارد
+        return response()->noContent();
     }
 }
