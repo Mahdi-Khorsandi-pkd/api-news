@@ -13,9 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // فراخوانی کردن سیدر نقش‌ها
         $this->call([
-            RoleSeeder::class,
+            RoleSeeder::class,         // اول نقش‌ها
+            SuperAdminSeeder::class,   // سپس ادمین
+            WriterUserSeeder::class,   // و در نهایت نویسنده
         ]);
     }
 }
