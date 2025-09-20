@@ -1,14 +1,13 @@
 <?php
 
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-// این خط باید به Exception پکیج Spatie اشاره کند
 use Spatie\Permission\Exceptions\UnauthorizedException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Illuminate\Auth\AuthenticationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,7 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // اینجا هم باید نوع Exception صحیح باشد
+
+        // مدیریت خطای دسترسی (403 Forbidden)
         $exceptions->render(function (UnauthorizedException $e, Request $request) {
             return response()->json([
                 'status' => false,
@@ -34,9 +34,8 @@ return Application::configure(basePath: dirname(__DIR__))
             ], 403);
         });
 
-         // مدیریت خطای یافت نشدن مسیر (404)  <-- این قسمت جدید است
-         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            // فقط برای درخواست‌های API این پاسخ را برگردان
+        // مدیریت خطای یافت نشدن مسیر (404 Not Found)
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => false,
@@ -46,6 +45,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
+        // مدیریت خطای متد HTTP نامعتبر (405 Method Not Allowed)
         $exceptions->render(function (MethodNotAllowedHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
@@ -56,14 +56,15 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-
-            $exceptions->render(function (AuthenticationException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+        // مدیریت خطای احراز هویت (401 Unauthorized)
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            if ($request->is('api/*')) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'شما احراز هویت نشده‌اید..',
+                    'message' => 'شما احراز هویت نشده‌اید. لطفا ابتدا وارد شوید.',
                     'data' => null
                 ], 401);
             }
         });
+
     })->create();
