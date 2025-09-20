@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SyncMenuRequest;
 use App\Http\Resources\MenuItemResource;
 use App\Http\Resources\MenuResource;
 use App\Models\Menu;
@@ -38,7 +39,7 @@ class MenuController extends Controller
     {
         $this->authorize('view', $menu);
         $menuTree = $this->menuService->getMenuByLocation($menu->location);
-
+     
         $data = [
             'name' => $menu->name,
             'location' => $menu->location,
@@ -48,6 +49,13 @@ class MenuController extends Controller
         return $this->successResponse($data);
     }
 
-    // متد sync را در مرحله بعد تکمیل می‌کنیم
-    // public function sync(...) {}
+    public function sync(SyncMenuRequest $request, Menu $menu): JsonResponse
+    {
+        $this->authorize('sync', $menu);
+
+        $this->menuService->syncMenu($menu, $request->validated()['items']);
+
+        return $this->successResponse(null, 'منو با موفقیت به‌روزرسانی شد.');
+    }
+
 }

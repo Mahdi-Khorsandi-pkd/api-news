@@ -39,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
         // Sections  <-- مسیرهای جدید اینجا اضافه شدند
         Route::get('/sections/{section}', [SectionController::class, 'show']);
         Route::post('/sections/{section}/sync-categories', [SectionController::class, 'syncCategories']);
+
+         Route::get('/menus', [MenuController::class, 'index']);
+    Route::post('/menus/{menu:location}/sync', [MenuController::class, 'sync']);
     });
 
 });

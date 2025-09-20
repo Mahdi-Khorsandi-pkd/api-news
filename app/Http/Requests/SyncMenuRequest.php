@@ -6,23 +6,23 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SyncMenuRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'items' => 'required|array',
+            'items.*.category_id' => 'required|integer|exists:categories,id',
+            'items.*.order' => 'required|integer',
+            'items.*.children' => 'present|array',
+
+            // اعتبارسنجی برای سطح دوم زیرمنوها
+            'items.*.children.*.category_id' => 'required|integer|exists:categories,id',
+            'items.*.children.*.order' => 'required|integer',
+            'items.*.children.*.children' => 'present|array',
         ];
     }
 }
