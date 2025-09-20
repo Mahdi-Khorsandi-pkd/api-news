@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\SectionController; // <-- این خط اضافه شود
 use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
 Route::get('/sections', [SectionController::class, 'index']);
+Route::get('/menus/{menu:location}', [MenuController::class, 'show']);
 
 
 // ### مسیرهای محافظت شده (نیاز به لاگین) ###
@@ -37,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
         // Sections  <-- مسیرهای جدید اینجا اضافه شدند
         Route::get('/sections/{section}', [SectionController::class, 'show']);
         Route::post('/sections/{section}/sync-categories', [SectionController::class, 'syncCategories']);
+
+         Route::get('/menus', [MenuController::class, 'index']);
+    Route::post('/menus/{menu:location}/sync', [MenuController::class, 'sync']);
     });
 
 });

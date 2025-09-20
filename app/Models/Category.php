@@ -45,4 +45,13 @@ class Category extends Model
     {
         return $this->belongsToMany(Section::class);
     }
+
+    /**
+     * The menus that belong to the category.
+     */
+    public function menus(): BelongsToMany
+    {
+        return $this->belongsToMany(Menu::class)
+            ->withPivot(['parent_id', 'order']);
+    }
 }

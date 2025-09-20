@@ -14,10 +14,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            RoleSeeder::class,         // اول نقش‌ها
-            SuperAdminSeeder::class,   // سپس ادمین
-            WriterUserSeeder::class,   // و در نهایت نویسنده
-            SectionSeeder::class, // <-- این خط را اضافه کن
+            RoleSeeder::class,         //  نقش‌ها
+            SuperAdminSeeder::class,   //  ادمین
+            WriterUserSeeder::class,   // نویسنده
+            SectionSeeder::class, // بخش ها
+            MenuSeeder::class, // نوع منو
         ]);
     }
 }
